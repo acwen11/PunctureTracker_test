@@ -1,0 +1,19 @@
+# Parameter definitions for thorn TestPT
+
+SHARES: ADMBase
+
+EXTENDS KEYWORD initial_data 
+{
+  "shift_circle" :: "circular shift field for testing puncture tracker"
+} 
+
+SHARES: IO
+
+USES STRING out_dir
+
+RESTRICTED:
+
+REAL center_offset[3] "offset b=0 to position (x,y,z)"
+{
+  (*:*) :: ""
+} 0.0
