@@ -256,7 +256,7 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
                                                   components for velocity */
 
     if (CCTK_MyProc(cctkGH) == 0) {
-		for (int ii=0; ii<max_num_tracked; ii++){
+		for (int ii = 0; ii < 6 * max_num_tracked; ii++){
 			loc_global[ii] = loc_local[ii];
 		}
 	}
