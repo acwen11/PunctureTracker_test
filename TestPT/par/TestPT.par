@@ -101,4 +101,5 @@ CarpetX::out_silo_vars = "
 
 CarpetX::out_tsv_vars = "
 	PunctureTracker::pt_loc
+	PunctureTracker::pt_vel
 "
