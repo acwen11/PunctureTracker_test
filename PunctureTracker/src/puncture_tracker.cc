@@ -164,7 +164,7 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     output_arrays[1] = pt_betay;
     output_arrays[2] = pt_betaz;
 
-	CCTK_INT operations[num_vars] = {0, 0, 0};
+	CCTK_INT operations[1][num_vars] = {0, 0, 0};
 
     // Interpolate
     int ierr;

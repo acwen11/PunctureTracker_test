@@ -2,15 +2,11 @@ ActiveThorns = "
     CarpetX
     IOUtil
 	Coordinates
-    ODESolvers
     SystemTopology
     TimerReport
     ADMBase
-	AEILocalInterp
 	PunctureTracker
 	TestPT
-	CoordBase
-	CartGrid3D
 "
 
 
@@ -66,11 +62,6 @@ CarpetX::regrid_error_threshold = 0.01
 CarpetX::prolongation_type = "ddf"
 CarpetX::ghost_size        = 2
 CarpetX::dtfac             = 0.25
-
-
-
-# -------------------- ODESolvers ----------------------------------------------
-ODESolvers::method = "RK4"
 
 
 
