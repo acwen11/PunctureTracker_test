@@ -5,7 +5,6 @@ IMPLEMENTS: PunctureTracker
 INHERITS: ADMBase Coordinates
 
 
-
 CCTK_REAL pt_loc[10] TYPE=scalar
 {
   pt_loc_t pt_loc_x pt_loc_y pt_loc_z
@@ -36,3 +35,15 @@ CCTK_INT FUNCTION DriverInterpolate(
   CCTK_INT ARRAY IN output_array_types,
   CCTK_POINTER ARRAY IN output_arrays)
 REQUIRES FUNCTION DriverInterpolate
+
+void FUNCTION Interpolate( 
+  CCTK_POINTER_TO_CONST IN cctkGH, 
+  CCTK_INT IN npoints, 
+  CCTK_REAL ARRAY IN coordsx, 
+  CCTK_REAL ARRAY IN coordsy, 
+  CCTK_REAL ARRAY IN coordsz, 
+  CCTK_INT IN nvars, 
+  CCTK_INT ARRAY IN varinds, 
+  CCTK_INT ARRAY IN operations, 
+  CCTK_POINTER IN resultptrs) 
+REQUIRES FUNCTION Interpolate 
