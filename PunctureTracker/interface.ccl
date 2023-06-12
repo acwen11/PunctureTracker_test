@@ -4,6 +4,7 @@ IMPLEMENTS: PunctureTracker
 
 INHERITS: ADMBase Coordinates
 
+USES INCLUDE HEADER: loop.hxx
 
 CCTK_REAL pt_loc[10] TYPE=scalar
 {
