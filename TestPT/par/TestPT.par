@@ -22,7 +22,7 @@ Cactus::cctk_final_time = 100
 
 
 # -------------------- TimerReport ---------------------------------------------
-TimerReport::out_every                  = 10
+TimerReport::out_every                  = 32
 TimerReport::out_filename               = "TimerReport.asc"
 TimerReport::output_all_timers_together = yes
 TimerReport::output_all_timers_readable = yes
@@ -89,7 +89,7 @@ CarpetX::interpolation_order = 4
 
 
 IO::out_dir = $parfile
-IO::out_every = 10 
+IO::out_every = 32
 CarpetX::out_silo_vars = "
 	ADMBase::shift
 "
