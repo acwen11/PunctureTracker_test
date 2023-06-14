@@ -1,12 +1,13 @@
 ActiveThorns = "
     CarpetX
     IOUtil
-	Coordinates
+    Coordinates
     SystemTopology
     TimerReport
     ADMBase
-	PunctureTracker
-	TestPT
+    PunctureTracker
+    TestPT
+    ErrorEstimator
 "
 
 
@@ -63,7 +64,13 @@ CarpetX::prolongation_type = "ddf"
 CarpetX::ghost_size        = 2
 CarpetX::dtfac             = 0.25
 
+# Add Grid Structure
+CarpetX::max_num_levels = 3
+CarpetX::regrid_every = 16
+CarpetX::regrid_error_threshold = 0.25
 
+ErrorEstimator::region_shape = "cube"
+ErrorEstimator::scale_by_resolution = yes
 
 # -------------------- ADMBase -------------------------------------------------
 ADMBase::initial_data    = "shift_circle"
