@@ -10,8 +10,6 @@ void TestPT(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS_TestPT;
   DECLARE_CCTK_PARAMETERS;
 
-  CCTK_VINFO("TestPT actually ran.");
-
   const int di = 1;
   const int dj = di * cctk_ash[0];
   const int dk = dj * cctk_ash[1];
@@ -27,8 +25,6 @@ void TestPT(CCTK_ARGUMENTS) {
 
 	betax[ind] = yy;
 	betay[ind] = -xx;
-	
-	CCTK_VINFO("Set beta inside loop.");
   }
   CCTK_ENDLOOP3_ALL(TestPT);
 }
