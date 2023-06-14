@@ -2,6 +2,7 @@
 #include <cctk_Arguments.h>
 #include <cctk_Parameters.h>
 #include <util_Table.h>
+#include <loop.hxx>
 #include <mpi.h>
 
 #include <cassert>
@@ -14,7 +15,7 @@ using namespace std;
 const int max_num_tracked = 10;
 
 extern "C" void PunctureTracker_Init(CCTK_ARGUMENTS) {
-  DECLARE_CCTK_ARGUMENTS;
+  DECLARE_CCTK_ARGUMENTSX_PunctureTracker_Init;
   DECLARE_CCTK_PARAMETERS;
 
   if (verbose) {
@@ -50,7 +51,7 @@ extern "C" void PunctureTracker_Init(CCTK_ARGUMENTS) {
 }
 
 extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
-  DECLARE_CCTK_ARGUMENTS;
+  DECLARE_CCTK_ARGUMENTSX_PunctureTracker_Track;
   DECLARE_CCTK_PARAMETERS;
 
   // Do not track while setting up initial data;

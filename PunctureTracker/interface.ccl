@@ -6,9 +6,11 @@ INHERITS: ADMBase Coordinates
 
 USES INCLUDE HEADER: loop.hxx
 
+PRIVATE:
+
 CCTK_REAL pt_loc[10] TYPE=scalar
 {
-  pt_loc_t pt_loc_x pt_loc_y pt_loc_z
+	pt_loc_t pt_loc_x pt_loc_y pt_loc_z
 } "Location of punctures"
 
 CCTK_REAL pt_loc_p[10] TYPE=scalar

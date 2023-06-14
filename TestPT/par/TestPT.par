@@ -53,12 +53,9 @@ CarpetX::ncells_x = 200
 CarpetX::ncells_y = 200
 CarpetX::ncells_z = 2
 
-CarpetX::max_num_levels         = 1
-CarpetX::regrid_every           = 100000
 CarpetX::blocking_factor_x      = 1
 CarpetX::blocking_factor_y      = 1
 CarpetX::blocking_factor_z      = 1
-CarpetX::regrid_error_threshold = 0.01
 
 CarpetX::prolongation_type = "ddf"
 CarpetX::ghost_size        = 2
