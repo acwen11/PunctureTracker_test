@@ -122,7 +122,7 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     //   goto label_free_param_table;
     // }
     const int coordsys_handle = 0;
-	CCTK_INT const interp_coords_type_code = 0;
+		CCTK_INT const interp_coords_type_code = 0;
 
     // Only processor 0 interpolates
     const int num_points = CCTK_MyProc(cctkGH) == 0 ? max_num_tracked : 0;
@@ -130,12 +130,12 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     // Interpolation coordinates
     assert(dim == 3);
     CCTK_POINTER_TO_CONST interp_coords[dim];
-	interp_coords[0] = pt_loc_x_p;
-	interp_coords[1] = pt_loc_y_p;
-	interp_coords[2] = pt_loc_z_p;
+		interp_coords[0] = pt_loc_x_p;
+		interp_coords[1] = pt_loc_y_p;
+		interp_coords[2] = pt_loc_z_p;
 
-	// const CCTK_REAL interp_coords[dim][num_points] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
-	// const void* interp_coords[dim] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
+		// const CCTK_REAL interp_coords[dim][num_points] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
+		// const void* interp_coords[dim] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
 
     // Number of interpolation variables
     int const num_vars = 3;
@@ -153,7 +153,7 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     // output_array_type_codes[0] = CCTK_VARIABLE_REAL;
     // output_array_type_codes[1] = CCTK_VARIABLE_REAL;
     // output_array_type_codes[2] = CCTK_VARIABLE_REAL;
-	CCTK_INT const output_array_type_codes[1] = {0};
+		CCTK_INT const output_array_type_codes[1] = {0};
 
     // Interpolation result
     CCTK_REAL pt_betax[max_num_tracked];
@@ -167,7 +167,7 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     output_arrays[1] = pt_betay;
     output_arrays[2] = pt_betaz;
 
-	// CCTK_INT operations[num_vars] = {0, 0, 0};
+		// CCTK_INT operations[num_vars] = {0, 0, 0};
 
     // Interpolate
     int ierr;
@@ -189,15 +189,14 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     //
     //
     // Use CarpetX Funtion:
-	CCTK_VINFO("About to Interpolate.");
-	ierr = DriverInterpolate(
+		ierr = DriverInterpolate(
 		cctkGH, dim, operator_handle, param_table_handle, coordsys_handle,
 		num_points, interp_coords_type_code, interp_coords, num_vars, (int const * const)input_array_indices,
 		num_vars, output_array_type_codes, output_arrays);
 
-	// Interpolate(cctkGH, num_points, interp_coords[0], interp_coords[1], interp_coords[2],
-	// 	num_vars, (CCTK_INT const * const)input_array_indices, (CCTK_INT const * const)operations,
-	// 	(CCTK_REAL **)output_arrays); 
+		// Interpolate(cctkGH, num_points, interp_coords[0], interp_coords[1], interp_coords[2],
+		// 	num_vars, (CCTK_INT const * const)input_array_indices, (CCTK_INT const * const)operations,
+		// 	(CCTK_REAL **)output_arrays); 
 
     // if (ierr < 0) {
     //   CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
@@ -282,8 +281,8 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     //   goto label_free_param_table;
     // }
 
-	// CarpetX doesn't register reduction handle, here's a quick fix.
-	MPI_Bcast(loc_global, 6 * max_num_tracked, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+		// CarpetX doesn't register reduction handle, here's a quick fix.
+		MPI_Bcast(loc_global, 6 * max_num_tracked, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     for (int n = 0; n < max_num_tracked; ++n) {
       pt_loc_x[n] = loc_global[n];

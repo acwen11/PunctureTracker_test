@@ -8,9 +8,10 @@ SCHEDULE PunctureTracker_Init AT initial
   OPTIONS: GLOBAL
 } "Calculate initial location of punctures"
 
-SCHEDULE PunctureTracker_Track AT evol AFTER MoL_Evolution
+SCHEDULE PunctureTracker_Track AT evol AFTER ODESolvers_Solve
 {
   LANG: C
+	READS: ADMBase::shift(everywhere)
   OPTIONS: GLOBAL
 } "Calculate new location of punctures"
 
