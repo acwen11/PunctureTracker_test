@@ -25,16 +25,13 @@ extern "C" void PunctureTracker_Init(CCTK_ARGUMENTS) {
   for (int n = 0; n < max_num_tracked; ++n) {
     if (track[n]) {
       pt_loc_t[n] = cctk_time;
-			CCTK_VINFO("Init time of punc %d", n);
       pt_loc_x[n] = initial_x[n];
       pt_loc_y[n] = initial_y[n];
       pt_loc_z[n] = initial_z[n];
-			CCTK_VINFO("Init coords of punc %d", n);
       pt_vel_t[n] = cctk_time;
       pt_vel_x[n] = 0.0;
       pt_vel_y[n] = 0.0;
       pt_vel_z[n] = 0.0;
-			CCTK_VINFO("Init vel of punc %d", n);
     } else {
       // Initialise to some sensible but unimportant values
       pt_loc_t[n] = 0.0;
@@ -45,9 +42,18 @@ extern "C" void PunctureTracker_Init(CCTK_ARGUMENTS) {
       pt_vel_x[n] = 0.0;
       pt_vel_y[n] = 0.0;
       pt_vel_z[n] = 0.0;
-			CCTK_VINFO("Punc %d not tracked.", n);
     }
   }
+	
+	if (track_boxes) {
+		const int max_num_regions = 2;
+		for (int i = 0; i < max_num_regions; i++) {
+			CCTK_VINFO("Writing punc coords to box %d.", i);
+			position_x[i] = pt_loc_x[i];
+			position_y[i] = pt_loc_y[i];
+			position_z[i] = pt_loc_z[i];
+		}
+	}
 }
 
 extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
@@ -295,6 +301,15 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     }
   }
 
+	if (track_boxes) {
+		const int max_num_regions = 2;
+		for (int i = 0; i < max_num_regions; i++) {
+			CCTK_VINFO("Writing punc coords to box %d.", i);
+			position_x[i] = pt_loc_x[i];
+			position_y[i] = pt_loc_y[i];
+			position_z[i] = pt_loc_z[i];
+		}
+	}
 // Done
 
 // Poor man's exception handling

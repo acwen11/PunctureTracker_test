@@ -2,9 +2,11 @@
 
 IMPLEMENTS: PunctureTracker
 
-INHERITS: ADMBase Coordinates
+INHERITS: ADMBase Coordinates BoxInBox
 
 USES INCLUDE HEADER: loop.hxx
+
+PUBLIC:
 
 CCTK_REAL pt_loc[10] TYPE=scalar
 {

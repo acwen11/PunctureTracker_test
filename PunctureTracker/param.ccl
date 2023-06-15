@@ -8,6 +8,10 @@ BOOLEAN track[10] "Track this puncture"
 {
 } "no"
 
+BOOLEAN track_boxes "Enable to center refinement regions on punctures"
+{
+} "no"
+
 REAL initial_x[10] "Initial x coordinate positions of punctures"
 {
   *:* :: ""
