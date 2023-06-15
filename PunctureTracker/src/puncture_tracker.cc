@@ -15,7 +15,7 @@ using namespace std;
 const int max_num_tracked = 10;
 
 extern "C" void PunctureTracker_Init(CCTK_ARGUMENTS) {
-  DECLARE_CCTK_ARGUMENTSX_PunctureTracker_Init;
+  DECLARE_CCTK_ARGUMENTS_PunctureTracker_Init;
   DECLARE_CCTK_PARAMETERS;
 
   if (verbose) {
@@ -47,16 +47,11 @@ extern "C" void PunctureTracker_Init(CCTK_ARGUMENTS) {
       pt_vel_z[n] = 0.0;
 			CCTK_VINFO("Punc %d not tracked.", n);
     }
-		pt_loc_t_p[n] = 0.0;
-		pt_loc_x_p[n] = 0.0;
-		pt_loc_y_p[n] = 0.0;
-		pt_loc_z_p[n] = 0.0;
-		CCTK_VINFO("Init prev coords of punc %d", n);
   }
 }
 
 extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
-  DECLARE_CCTK_ARGUMENTSX_PunctureTracker_Track;
+  DECLARE_CCTK_ARGUMENTS_PunctureTracker_Track;
   DECLARE_CCTK_PARAMETERS;
 
   // Do not track while setting up initial data;
@@ -82,17 +77,17 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
   }
 
   // Manual time level cycling
+	CCTK_REAL pt_t_prev[max_num_tracked];
 
   for (int n = 0; n < max_num_tracked; ++n) {
     if (track[n]) {
-      pt_loc_t_p[n] = pt_loc_t[n];
-      pt_loc_x_p[n] = pt_loc_x[n];
-      pt_loc_y_p[n] = pt_loc_y[n];
-      pt_loc_z_p[n] = pt_loc_z[n];
-
+			pt_t_prev[n] = pt_loc_t[n];
       pt_loc_t[n] = cctk_time;
       pt_vel_t[n] = cctk_time;
     }
+		else {
+			pt_t_prev[n] = 0.0;
+		}
   }
 
   // Interpolate
@@ -136,9 +131,9 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     // Interpolation coordinates
     assert(dim == 3);
     CCTK_POINTER_TO_CONST interp_coords[dim];
-		interp_coords[0] = pt_loc_x_p;
-		interp_coords[1] = pt_loc_y_p;
-		interp_coords[2] = pt_loc_z_p;
+		interp_coords[0] = pt_loc_x;
+		interp_coords[1] = pt_loc_y;
+		interp_coords[2] = pt_loc_z;
 
 		// const CCTK_REAL interp_coords[dim][num_points] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
 		// const void* interp_coords[dim] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
@@ -204,10 +199,10 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
 		// 	num_vars, (CCTK_INT const * const)input_array_indices, (CCTK_INT const * const)operations,
 		// 	(CCTK_REAL **)output_arrays); 
 
-    // if (ierr < 0) {
-    //   CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
-    //   goto label_free_param_table;
-    // }
+    if (ierr < 0) {
+      CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
+      goto label_free_param_table;
+    }
 
     if (CCTK_MyProc(cctkGH) == 0) {
 
@@ -244,13 +239,13 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
 
       for (int n = 0; n < max_num_tracked; ++n) {
         if (track[n]) {
-          const CCTK_REAL dt = pt_loc_t[n] - pt_loc_t_p[n];
+          const CCTK_REAL dt = pt_loc_t[n] - pt_t_prev[n];
           // First order time integrator
           // Michael Koppitz says this works...
           // if it doesn't, we can make it second order accurate
-          pt_loc_x[n] = pt_loc_x_p[n] + dt * (-pt_betax[n]);
-          pt_loc_y[n] = pt_loc_y_p[n] + dt * (-pt_betay[n]);
-          pt_loc_z[n] = pt_loc_z_p[n] + dt * (-pt_betaz[n]);
+          pt_loc_x[n] += dt * (-pt_betax[n]);
+          pt_loc_y[n] += dt * (-pt_betay[n]);
+          pt_loc_z[n] += dt * (-pt_betaz[n]);
           pt_vel_x[n] = -pt_betax[n];
           pt_vel_y[n] = -pt_betay[n];
           pt_vel_z[n] = -pt_betaz[n];
