@@ -10,8 +10,7 @@ void TestPT(CCTK_ARGUMENTS) {
   DECLARE_CCTK_ARGUMENTS_TestPT;
   DECLARE_CCTK_PARAMETERS;
 
-  CCTK_VINFO("TestPT actually ran.");
-
+	CCTK_VINFO("Running TestPT...");
   const int di = 1;
   const int dj = di * cctk_ash[0];
   const int dk = dj * cctk_ash[1];
@@ -25,10 +24,9 @@ void TestPT(CCTK_ARGUMENTS) {
     yy = vcoordy[ind] - center_offset[1];
     zz = vcoordz[ind] - center_offset[2];
 
-	betax[ind] = yy;
-	betay[ind] = -xx;
-	
-	CCTK_VINFO("Set beta inside loop.");
+		betax[ind] = yy;
+		betay[ind] = -xx;
+		CCTK_VINFO("Set beta");
   }
   CCTK_ENDLOOP3_ALL(TestPT);
 }

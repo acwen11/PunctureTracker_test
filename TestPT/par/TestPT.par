@@ -1,16 +1,13 @@
 ActiveThorns = "
     CarpetX
     IOUtil
-	Coordinates
-    ODESolvers
+    Coordinates
     SystemTopology
     TimerReport
     ADMBase
-	AEILocalInterp
-	PunctureTracker
-	TestPT
-	CoordBase
-	CartGrid3D
+    PunctureTracker
+    TestPT
+    ErrorEstimator
 "
 
 
@@ -25,7 +22,7 @@ Cactus::cctk_final_time = 100
 
 
 # -------------------- TimerReport ---------------------------------------------
-TimerReport::out_every                  = 10
+TimerReport::out_every                  = 32
 TimerReport::out_filename               = "TimerReport.asc"
 TimerReport::output_all_timers_together = yes
 TimerReport::output_all_timers_readable = yes
@@ -56,23 +53,21 @@ CarpetX::ncells_x = 200
 CarpetX::ncells_y = 200
 CarpetX::ncells_z = 2
 
-CarpetX::max_num_levels         = 1
-CarpetX::regrid_every           = 100000
 CarpetX::blocking_factor_x      = 1
 CarpetX::blocking_factor_y      = 1
 CarpetX::blocking_factor_z      = 1
-CarpetX::regrid_error_threshold = 0.01
 
 CarpetX::prolongation_type = "ddf"
 CarpetX::ghost_size        = 2
 CarpetX::dtfac             = 0.25
 
+# Add Grid Structure
+CarpetX::max_num_levels = 3
+CarpetX::regrid_every = 16
+CarpetX::regrid_error_threshold = 0.25
 
-
-# -------------------- ODESolvers ----------------------------------------------
-ODESolvers::method = "RK4"
-
-
+ErrorEstimator::region_shape = "cube"
+ErrorEstimator::scale_by_resolution = yes
 
 # -------------------- ADMBase -------------------------------------------------
 ADMBase::initial_data    = "shift_circle"
@@ -94,7 +89,7 @@ CarpetX::interpolation_order = 4
 
 
 IO::out_dir = $parfile
-IO::out_every = 10 
+IO::out_every = 32
 CarpetX::out_silo_vars = "
 	ADMBase::shift
 "

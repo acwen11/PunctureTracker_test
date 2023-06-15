@@ -2,6 +2,7 @@
 #include <cctk_Arguments.h>
 #include <cctk_Parameters.h>
 #include <util_Table.h>
+#include <loop.hxx>
 #include <mpi.h>
 
 #include <cassert>
@@ -14,7 +15,7 @@ using namespace std;
 const int max_num_tracked = 10;
 
 extern "C" void PunctureTracker_Init(CCTK_ARGUMENTS) {
-  DECLARE_CCTK_ARGUMENTS;
+  DECLARE_CCTK_ARGUMENTS_PunctureTracker_Init;
   DECLARE_CCTK_PARAMETERS;
 
   if (verbose) {
@@ -24,13 +25,16 @@ extern "C" void PunctureTracker_Init(CCTK_ARGUMENTS) {
   for (int n = 0; n < max_num_tracked; ++n) {
     if (track[n]) {
       pt_loc_t[n] = cctk_time;
+			CCTK_VINFO("Init time of punc %d", n);
       pt_loc_x[n] = initial_x[n];
       pt_loc_y[n] = initial_y[n];
       pt_loc_z[n] = initial_z[n];
+			CCTK_VINFO("Init coords of punc %d", n);
       pt_vel_t[n] = cctk_time;
       pt_vel_x[n] = 0.0;
       pt_vel_y[n] = 0.0;
       pt_vel_z[n] = 0.0;
+			CCTK_VINFO("Init vel of punc %d", n);
     } else {
       // Initialise to some sensible but unimportant values
       pt_loc_t[n] = 0.0;
@@ -41,16 +45,13 @@ extern "C" void PunctureTracker_Init(CCTK_ARGUMENTS) {
       pt_vel_x[n] = 0.0;
       pt_vel_y[n] = 0.0;
       pt_vel_z[n] = 0.0;
+			CCTK_VINFO("Punc %d not tracked.", n);
     }
-    pt_loc_t_p[n] = 0.0;
-    pt_loc_x_p[n] = 0.0;
-    pt_loc_y_p[n] = 0.0;
-    pt_loc_z_p[n] = 0.0;
   }
 }
 
 extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
-  DECLARE_CCTK_ARGUMENTS;
+  DECLARE_CCTK_ARGUMENTS_PunctureTracker_Track;
   DECLARE_CCTK_PARAMETERS;
 
   // Do not track while setting up initial data;
@@ -76,17 +77,17 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
   }
 
   // Manual time level cycling
+	CCTK_REAL pt_t_prev[max_num_tracked];
 
   for (int n = 0; n < max_num_tracked; ++n) {
     if (track[n]) {
-      pt_loc_t_p[n] = pt_loc_t[n];
-      pt_loc_x_p[n] = pt_loc_x[n];
-      pt_loc_y_p[n] = pt_loc_y[n];
-      pt_loc_z_p[n] = pt_loc_z[n];
-
+			pt_t_prev[n] = pt_loc_t[n];
       pt_loc_t[n] = cctk_time;
       pt_vel_t[n] = cctk_time;
     }
+		else {
+			pt_t_prev[n] = 0.0;
+		}
   }
 
   // Interpolate
@@ -94,18 +95,20 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
   // Dimensions
   const int dim = 3;
 
-  // Interpolation operator
-  // For CarpetX: Activated AEILocalInterp
-  const int operator_handle =
-      CCTK_InterpHandle("Lagrange polynomial interpolation");
-  if (operator_handle < 0) {
-    CCTK_WARN(CCTK_WARN_ALERT, "Can't get interpolation handle");
-    return;
-  }
+  // Interpolation operator: Not used in CarpetX_DriverInterpolate
+  // const int operator_handle =
+  //     CCTK_InterpHandle("Lagrange polynomial interpolation");
+  // if (operator_handle < 0) {
+  //   CCTK_WARN(CCTK_WARN_ALERT, "Can't get interpolation handle");
+  //   return;
+  // }
+
+  const int operator_handle = 0;
 
   // Interpolation parameter table
   const int order = 4;
   const int param_table_handle = Util_TableCreateFromString("order=4");
+  // int param_table_handle = Util_TableCreate(UTIL_TABLE_FLAGS_DEFAULT);
   if (param_table_handle < 0) {
     CCTK_WARN(CCTK_WARN_ALERT, "Can't create parameter table");
     return;
@@ -113,23 +116,27 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
 
   {
 
-    // Interpolation coordinate system
-    // For CarpetX: Activated CartGrid3D, Startup only
-    const int coordsys_handle = CCTK_CoordSystemHandle("cart3d");
-    if (coordsys_handle < 0) {
-      CCTK_WARN(CCTK_WARN_ALERT, "Can't get coordinate system handle");
-      goto label_free_param_table;
-    }
+    // Interpolation coordinate system: Not used in CarpetX_DriverInterpolate
+    // const int coordsys_handle = CCTK_CoordSystemHandle("cart3d");
+    // if (coordsys_handle < 0) {
+    //   CCTK_WARN(CCTK_WARN_ALERT, "Can't get coordinate system handle");
+    //   goto label_free_param_table;
+    // }
+    const int coordsys_handle = 0;
+		CCTK_INT const interp_coords_type_code = 0;
 
     // Only processor 0 interpolates
     const int num_points = CCTK_MyProc(cctkGH) == 0 ? max_num_tracked : 0;
 
     // Interpolation coordinates
     assert(dim == 3);
-    CCTK_POINTER_TO_CONST interp_coords[3];
-    interp_coords[0] = pt_loc_x_p;
-    interp_coords[1] = pt_loc_y_p;
-    interp_coords[2] = pt_loc_z_p;
+    CCTK_POINTER_TO_CONST interp_coords[dim];
+		interp_coords[0] = pt_loc_x;
+		interp_coords[1] = pt_loc_y;
+		interp_coords[2] = pt_loc_z;
+
+		// const CCTK_REAL interp_coords[dim][num_points] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
+		// const void* interp_coords[dim] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
 
     // Number of interpolation variables
     int const num_vars = 3;
@@ -141,12 +148,13 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     input_array_indices[1] = CCTK_VarIndex("ADMBase::betay");
     input_array_indices[2] = CCTK_VarIndex("ADMBase::betaz");
 
-    // Interpolation result types
-    assert(num_vars == 3);
-    CCTK_INT output_array_type_codes[3];
-    output_array_type_codes[0] = CCTK_VARIABLE_REAL;
-    output_array_type_codes[1] = CCTK_VARIABLE_REAL;
-    output_array_type_codes[2] = CCTK_VARIABLE_REAL;
+    // Interpolation result types: Not used by CarpetX DriverInterp
+    // assert(num_vars == 3);
+    // CCTK_INT output_array_type_codes[3];
+    // output_array_type_codes[0] = CCTK_VARIABLE_REAL;
+    // output_array_type_codes[1] = CCTK_VARIABLE_REAL;
+    // output_array_type_codes[2] = CCTK_VARIABLE_REAL;
+		CCTK_INT const output_array_type_codes[1] = {0};
 
     // Interpolation result
     CCTK_REAL pt_betax[max_num_tracked];
@@ -154,26 +162,43 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     CCTK_REAL pt_betaz[max_num_tracked];
 
     assert(num_vars == 3);
+    // CCTK_REAL * output_arrays[3];
     CCTK_POINTER output_arrays[3];
     output_arrays[0] = pt_betax;
     output_arrays[1] = pt_betay;
     output_arrays[2] = pt_betaz;
 
+		// CCTK_INT operations[num_vars] = {0, 0, 0};
+
     // Interpolate
     int ierr;
-    if (CCTK_IsFunctionAliased("InterpGridArrays")) {
-      // TODO: use correct array types
-      // (CCTK_POINTER[] vs. CCTK_REAL[])
-      ierr = InterpGridArrays(cctkGH, dim, order, num_points, interp_coords,
-                              num_vars, input_array_indices, num_vars,
-                              output_arrays);
-    } else {
-      ierr = CCTK_InterpGridArrays(
-          cctkGH, dim, operator_handle, param_table_handle, coordsys_handle,
-          num_points, CCTK_VARIABLE_REAL, interp_coords, num_vars,
-          input_array_indices, num_vars, output_array_type_codes,
-          output_arrays);
-    }
+    // if (CCTK_IsFunctionAliased("InterpGridArrays")) {
+    //   // TODO: use correct array types
+    //   // (CCTK_POINTER[] vs. CCTK_REAL[])
+    //   CCTK_VINFO("Aliased InterpGridArrays function.");
+    //   ierr = InterpGridArrays(cctkGH, dim, order, num_points, interp_coords,
+    //                           num_vars, input_array_indices, num_vars,
+    //                           output_arrays);
+    // } else {
+    //   CCTK_VINFO("No aliased InterpGridArrays function.");
+    //   ierr = CCTK_InterpGridArrays(
+    //       cctkGH, dim, operator_handle, param_table_handle, coordsys_handle,
+    //       num_points, CCTK_VARIABLE_REAL, interp_coords, num_vars,
+    //       input_array_indices, num_vars, output_array_type_codes,
+    //       output_arrays);
+    // }
+    //
+    //
+    // Use CarpetX Funtion:
+		ierr = DriverInterpolate(
+		cctkGH, dim, operator_handle, param_table_handle, coordsys_handle,
+		num_points, interp_coords_type_code, interp_coords, num_vars, (int const * const)input_array_indices,
+		num_vars, output_array_type_codes, output_arrays);
+
+		// Interpolate(cctkGH, num_points, interp_coords[0], interp_coords[1], interp_coords[2],
+		// 	num_vars, (CCTK_INT const * const)input_array_indices, (CCTK_INT const * const)operations,
+		// 	(CCTK_REAL **)output_arrays); 
+
     if (ierr < 0) {
       CCTK_WARN(CCTK_WARN_ALERT, "Interpolation error");
       goto label_free_param_table;
@@ -214,13 +239,13 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
 
       for (int n = 0; n < max_num_tracked; ++n) {
         if (track[n]) {
-          const CCTK_REAL dt = pt_loc_t[n] - pt_loc_t_p[n];
+          const CCTK_REAL dt = pt_loc_t[n] - pt_t_prev[n];
           // First order time integrator
           // Michael Koppitz says this works...
           // if it doesn't, we can make it second order accurate
-          pt_loc_x[n] = pt_loc_x_p[n] + dt * (-pt_betax[n]);
-          pt_loc_y[n] = pt_loc_y_p[n] + dt * (-pt_betay[n]);
-          pt_loc_z[n] = pt_loc_z_p[n] + dt * (-pt_betaz[n]);
+          pt_loc_x[n] += dt * (-pt_betax[n]);
+          pt_loc_y[n] += dt * (-pt_betay[n]);
+          pt_loc_z[n] += dt * (-pt_betaz[n]);
           pt_vel_x[n] = -pt_betax[n];
           pt_vel_y[n] = -pt_betay[n];
           pt_vel_z[n] = -pt_betaz[n];
@@ -230,36 +255,18 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
 
     // Broadcast result
 
-    CCTK_REAL loc_local[6 * max_num_tracked]; /* 3 components for location, 3
+    CCTK_REAL loc_global[6 * max_num_tracked]; /* 3 components for location, 3
                                                  components for velocity */
     if (CCTK_MyProc(cctkGH) == 0) {
       for (int n = 0; n < max_num_tracked; ++n) {
-        loc_local[n] = pt_loc_x[n];
-        loc_local[max_num_tracked + n] = pt_loc_y[n];
-        loc_local[2 * max_num_tracked + n] = pt_loc_z[n];
-        loc_local[3 * max_num_tracked + n] = pt_vel_x[n];
-        loc_local[4 * max_num_tracked + n] = pt_vel_y[n];
-        loc_local[5 * max_num_tracked + n] = pt_vel_z[n];
+        loc_global[n] = pt_loc_x[n];
+        loc_global[max_num_tracked + n] = pt_loc_y[n];
+        loc_global[2 * max_num_tracked + n] = pt_loc_z[n];
+        loc_global[3 * max_num_tracked + n] = pt_vel_x[n];
+        loc_global[4 * max_num_tracked + n] = pt_vel_y[n];
+        loc_global[5 * max_num_tracked + n] = pt_vel_z[n];
       }
-    } else {
-      for (int n = 0; n < max_num_tracked; ++n) {
-        loc_local[n] = 0.0;
-        loc_local[max_num_tracked + n] = 0.0;
-        loc_local[2 * max_num_tracked + n] = 0.0;
-        loc_local[3 * max_num_tracked + n] = 0.0;
-        loc_local[4 * max_num_tracked + n] = 0.0;
-        loc_local[5 * max_num_tracked + n] = 0.0;
-      }
-    }
-
-    CCTK_REAL loc_global[6 * max_num_tracked]; /* 3 components for location, 3
-                                                  components for velocity */
-
-    if (CCTK_MyProc(cctkGH) == 0) {
-		for (int ii = 0; ii < 6 * max_num_tracked; ii++){
-			loc_global[ii] = loc_local[ii];
-		}
-	}
+    } 
 
     // const int handle_sum = CCTK_ReductionArrayHandle("sum");
     // if (handle_sum < 0) {
@@ -275,7 +282,8 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     //   goto label_free_param_table;
     // }
 
-	MPI_Bcast(loc_global, 6 * max_num_tracked, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+		// CarpetX doesn't register reduction handle, here's a quick fix.
+		MPI_Bcast(loc_global, 6 * max_num_tracked, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
     for (int n = 0; n < max_num_tracked; ++n) {
       pt_loc_x[n] = loc_global[n];
