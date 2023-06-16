@@ -8,6 +8,7 @@ ActiveThorns = "
     PunctureTracker
     TestPT
 		BoxInBox
+		Z4c
 "
 
 
@@ -75,21 +76,18 @@ BoxInBox::shape_1 = "cube"
 BoxInBox::num_levels_1 = 2
 BoxInBox::position_x_1 = +3
 BoxInBox::radius_1[0] = 2
-BoxInBox::radius_1[1] = 0.75
+BoxInBox::radius_1[1] = 1
 
 # Region 2
 BoxInBox::shape_2 = "cube"
 BoxInBox::num_levels_2 = 2
 BoxInBox::position_x_2 = -3
 BoxInBox::radius_2[0] = 2
-BoxInBox::radius_2[1] = 0.75
+BoxInBox::radius_2[1] = 1
 
 # -------------------- ADMBase -------------------------------------------------
-ADMBase::initial_data    = "shift_circle"
-ADMBase::initial_lapse   = "one"
-ADMBase::initial_shift   = "none"
-ADMBase::initial_dtlapse = "none"
-ADMBase::initial_dtshift = "none"
+ADMBase::initial_data    = "Cartesian Minkowski"
+ADMBase::initial_shift   = "shift_circle"
 
 # PunctureTracker
 PunctureTracker::verbose = yes

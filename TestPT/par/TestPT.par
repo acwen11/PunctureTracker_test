@@ -8,6 +8,7 @@ ActiveThorns = "
     PunctureTracker
     TestPT
     ErrorEstimator
+		Z4c
 "
 
 
@@ -17,8 +18,7 @@ Cactus::presync_mode       = "mixed-error"
 CarpetX::poison_undefined_values = no
 
 Cactus::terminate       = "time"
-Cactus::cctk_final_time = 100
-
+Cactus::cctk_final_time = 8
 
 
 # -------------------- TimerReport ---------------------------------------------
@@ -70,11 +70,8 @@ ErrorEstimator::region_shape = "cube"
 ErrorEstimator::scale_by_resolution = yes
 
 # -------------------- ADMBase -------------------------------------------------
-ADMBase::initial_data    = "shift_circle"
-ADMBase::initial_lapse   = "one"
-ADMBase::initial_shift   = "none"
-ADMBase::initial_dtlapse = "none"
-ADMBase::initial_dtshift = "none"
+ADMBase::initial_data    = "Cartesian Minkowski"
+ADMBase::initial_shift   = "shift_circle"
 
 # PunctureTracker
 PunctureTracker::verbose = yes

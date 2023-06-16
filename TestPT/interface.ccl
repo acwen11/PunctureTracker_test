@@ -4,7 +4,7 @@ IMPLEMENTS: TestPT
 
 INHERITS: ADMBase Coordinates
 
-USES INCLUDE HEADER: loopcontrol.h
+USES INCLUDE HEADER: loop_device.hxx
 
 
 

@@ -3,30 +3,33 @@
 #include <cctk.h>
 #include <cctk_Arguments.h>
 #include <cctk_Parameters.h>
-#include <loopcontrol.h>
 
-void TestPT(CCTK_ARGUMENTS);
-void TestPT(CCTK_ARGUMENTS) {
-  DECLARE_CCTK_ARGUMENTS_TestPT;
+#include <loop_device.hxx>
+#include <array>
+
+namespace TestPT {
+using namespace std;
+using namespace Loop;
+
+extern "C" void TestPT_init_shift_circle(CCTK_ARGUMENTS) {
+  DECLARE_CCTK_ARGUMENTS_TestPT_init_shift_circle;
   DECLARE_CCTK_PARAMETERS;
 
-	CCTK_VINFO("Running TestPT...");
-  const int di = 1;
-  const int dj = di * cctk_ash[0];
-  const int dk = dj * cctk_ash[1];
-  const int np = dk * cctk_ash[2];
-  CCTK_LOOP3_ALL(TestPT, cctkGH, i, j, k) {
+  const array<int, dim> indextype = {0, 0, 0};
+  const GF3D2layout layout(cctkGH, indextype);
 
-    const int ind = CCTK_GFINDEX3D(cctkGH, i, j, k);
+  const GF3D2<CCTK_REAL> betax_(layout, betax);
+  const GF3D2<CCTK_REAL> betay_(layout, betay);
+  const GF3D2<CCTK_REAL> betaz_(layout, betaz);
 
-    CCTK_REAL xx, yy, zz;
-    xx = vcoordx[ind] - center_offset[0];
-    yy = vcoordy[ind] - center_offset[1];
-    zz = vcoordz[ind] - center_offset[2];
-
-		betax[ind] = yy;
-		betay[ind] = -xx;
-		CCTK_VINFO("Set beta");
-  }
-  CCTK_ENDLOOP3_ALL(TestPT);
+  const GridDescBaseDevice grid(cctkGH);
+  grid.loop_all_device<0, 0, 0>(grid.nghostzones,
+                                [=] CCTK_DEVICE(const PointDesc &p)
+                                    CCTK_ATTRIBUTE_ALWAYS_INLINE {
+                                      betax_(p.I) = p.y;
+                                      betay_(p.I) = -p.x;
+                                      betaz_(p.I) = 0;
+                                    });
 }
+
+} //namespace TestPT

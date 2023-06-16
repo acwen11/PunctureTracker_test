@@ -2,7 +2,7 @@
 
 SHARES: ADMBase
 
-EXTENDS KEYWORD initial_data 
+EXTENDS KEYWORD initial_shift 
 {
   "shift_circle" :: "circular shift field for testing puncture tracker"
 } 
