@@ -8,7 +8,6 @@ ActiveThorns = "
     PunctureTracker
     TestPT
 		BoxInBox
-		Z4c
 "
 
 
@@ -58,7 +57,8 @@ CarpetX::blocking_factor_y      = 1
 CarpetX::blocking_factor_z      = 1
 
 CarpetX::prolongation_type = "ddf"
-CarpetX::ghost_size        = 2
+CarpetX::prolongation_order = 5
+CarpetX::ghost_size        = 3
 CarpetX::dtfac             = 0.25
 
 
@@ -73,17 +73,21 @@ BoxInBox::num_regions = 1
 
 # Region 1
 BoxInBox::shape_1 = "cube"
-BoxInBox::num_levels_1 = 2
+BoxInBox::num_levels_1 = 4
 BoxInBox::position_x_1 = +3
 BoxInBox::radius_1[0] = 2
 BoxInBox::radius_1[1] = 1
+BoxInBox::radius_1[2] = 0.5
+BoxInBox::radius_1[3] = 0.25
 
 # Region 2
 BoxInBox::shape_2 = "cube"
-BoxInBox::num_levels_2 = 2
+BoxInBox::num_levels_2 = 4
 BoxInBox::position_x_2 = -3
 BoxInBox::radius_2[0] = 2
 BoxInBox::radius_2[1] = 1
+BoxInBox::radius_2[2] = 0.5
+BoxInBox::radius_2[3] = 0.25
 
 # -------------------- ADMBase -------------------------------------------------
 ADMBase::initial_data    = "Cartesian Minkowski"

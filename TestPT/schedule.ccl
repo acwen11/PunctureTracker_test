@@ -2,11 +2,14 @@
 
 if (CCTK_Equals(initial_shift, "shift_circle"))
 {
-	SCHEDULE GROUP TestPT_Group IN ADMBase_InitialGauge
+	SCHEDULE TestPT_init_shift_circle IN ADMBase_InitialGauge
 	{
-	} "Create Group?"
+		LANG:C
+		READS: Coordinates::vertex_coords(everywhere)
+		WRITES: ADMBase::shift(everywhere)
+	} "Create shift field"
 
-	SCHEDULE TestPT_init_shift_circle IN TestPT_Group
+	SCHEDULE TestPT_init_shift_circle AT postregrid
 	{
 		LANG:C
 		READS: Coordinates::vertex_coords(everywhere)
