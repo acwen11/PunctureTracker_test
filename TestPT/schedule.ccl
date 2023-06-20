@@ -17,7 +17,7 @@ if (CCTK_Equals(initial_shift, "shift_circle"))
 	} "Create shift field"
 }
 
-if (CCTK_Equals(initial_shift, "shift_circle_3D"))
+if (CCTK_Equals(initial_shift, "shift_3D"))
 {
 	SCHEDULE TestPT_init_shift_3D IN ADMBase_InitialGauge
 	{
@@ -34,3 +34,19 @@ if (CCTK_Equals(initial_shift, "shift_circle_3D"))
 	} "Create shift field"
 }
 
+if (CCTK_Equals(initial_shift, "shift_ycircle"))
+{
+	SCHEDULE TestPT_init_shift_ycircle IN ADMBase_InitialGauge
+	{
+		LANG:C
+		READS: Coordinates::vertex_coords(everywhere)
+		WRITES: ADMBase::shift(everywhere)
+	} "Create shift field"
+
+	SCHEDULE TestPT_init_shift_ycircle AT postregrid
+	{
+		LANG:C
+		READS: Coordinates::vertex_coords(everywhere)
+		WRITES: ADMBase::shift(everywhere)
+	} "Create shift field"
+}

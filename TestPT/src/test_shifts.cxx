@@ -32,8 +32,8 @@ extern "C" void TestPT_init_shift_circle(CCTK_ARGUMENTS) {
                                     });
 }
 
-extern "C" void TestPT_init_shift_3D(CCTK_ARGUMENTS) {
-  DECLARE_CCTK_ARGUMENTS_TestPT_init_shift_3D;
+extern "C" void TestPT_init_shift_ycircle(CCTK_ARGUMENTS) {
+  DECLARE_CCTK_ARGUMENTS_TestPT_init_shift_ycircle;
   DECLARE_CCTK_PARAMETERS;
 
   const array<int, dim> indextype = {0, 0, 0};
@@ -50,6 +50,27 @@ extern "C" void TestPT_init_shift_3D(CCTK_ARGUMENTS) {
                                       betax_(p.I) = p.z;
                                       betay_(p.I) = 0;
                                       betaz_(p.I) = -p.x;
+                                    });
+}
+
+extern "C" void TestPT_init_shift_3D(CCTK_ARGUMENTS) {
+  DECLARE_CCTK_ARGUMENTS_TestPT_init_shift_3D;
+  DECLARE_CCTK_PARAMETERS;
+
+  const array<int, dim> indextype = {0, 0, 0};
+  const GF3D2layout layout(cctkGH, indextype);
+
+  const GF3D2<CCTK_REAL> betax_(layout, betax);
+  const GF3D2<CCTK_REAL> betay_(layout, betay);
+  const GF3D2<CCTK_REAL> betaz_(layout, betaz);
+
+  const GridDescBaseDevice grid(cctkGH);
+  grid.loop_all_device<0, 0, 0>(grid.nghostzones,
+                                [=] CCTK_DEVICE(const PointDesc &p)
+                                    CCTK_ATTRIBUTE_ALWAYS_INLINE {
+                                      betax_(p.I) = (1.0 / 9.0) * (p.z - 2) * pow(p.y, 3);
+                                      betay_(p.I) = -(1.0 / 9.0) * (p.z - 2) * pow(p.x, 3);
+                                      betaz_(p.I) = (1.0 / 9.0) * ((p.z - 2) / (p.z)) * (p.y * pow(p.x, 3) - p.x * pow(p.y, 3));
                                     });
 }
 } //namespace TestPT

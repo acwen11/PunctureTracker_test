@@ -101,6 +101,9 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
   // Dimensions
   const int dim = 3;
 
+	// Number of interpolation variables
+	int const num_vars = 3;
+
   // Interpolation operator: Not used in CarpetX_DriverInterpolate
   // const int operator_handle =
   //     CCTK_InterpHandle("Lagrange polynomial interpolation");
@@ -112,13 +115,29 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
   const int operator_handle = 0;
 
   // Interpolation parameter table
-  const int order = 4;
-  const int param_table_handle = Util_TableCreateFromString("order=4");
-  // int param_table_handle = Util_TableCreate(UTIL_TABLE_FLAGS_DEFAULT);
-  if (param_table_handle < 0) {
-    CCTK_WARN(CCTK_WARN_ALERT, "Can't create parameter table");
-    return;
-  }
+  CCTK_INT operations[1][dim];
+	for (int var = 0 ; var < num_vars; var++) {
+	  operations[0][var] = 0;
+	}
+
+  int operands[1][dim];
+	for (int var = 0 ; var < num_vars; var++) {
+		operands[0][var] = var;
+	}
+
+	int ierr;
+  // const int param_table_handle = Util_TableCreateFromString("order=4");
+  int param_table_handle = Util_TableCreate(UTIL_TABLE_FLAGS_DEFAULT);
+  if (param_table_handle < 0)
+    CCTK_VERROR("Can't create parameter table: %d", param_table_handle);
+  if ((ierr = Util_TableSetInt(param_table_handle, 1, "order")) < 0)
+    CCTK_VERROR("Can't set order in parameter table: %d", ierr);
+  if ((ierr = Util_TableSetIntArray(param_table_handle, num_vars, (int const*const)operands,
+                            "operand_indices")) < 0)
+    CCTK_VERROR("Can't set operand_indices array in parameter table: %d", ierr);
+  if ((ierr = Util_TableSetIntArray(param_table_handle, num_vars, (int const*const)operations,
+                            "operation_codes")) < 0)
+    CCTK_VERROR("Can't set operation_codes array in parameter table: %d", ierr);
 
   {
 
@@ -144,8 +163,6 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
 		// const CCTK_REAL interp_coords[dim][num_points] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
 		// const void* interp_coords[dim] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
 
-    // Number of interpolation variables
-    int const num_vars = 3;
 
     // Interpolated variables
     assert(num_vars == 3);

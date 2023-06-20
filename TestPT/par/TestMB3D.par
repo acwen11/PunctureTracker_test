@@ -75,7 +75,8 @@ BoxInBox::num_regions = 1
 # Region 1
 BoxInBox::shape_1 = "cube"
 BoxInBox::num_levels_1 = 4
-BoxInBox::position_z_1 = +3
+BoxInBox::position_x_1 = +3
+BoxInBox::position_z_1 = +1
 BoxInBox::radius_1[0] = 2
 BoxInBox::radius_1[1] = 1
 BoxInBox::radius_1[2] = 0.5
@@ -83,13 +84,14 @@ BoxInBox::radius_1[3] = 0.25
 
 # -------------------- ADMBase -------------------------------------------------
 ADMBase::initial_data    = "Cartesian Minkowski"
-ADMBase::initial_shift   = "shift_circle_3D"
+ADMBase::initial_shift   = "shift_3D"
 
 # PunctureTracker
 PunctureTracker::verbose = yes
 
 PunctureTracker::track    [0] = yes
-PunctureTracker::initial_z[0] = +3
+PunctureTracker::initial_x[0] = +3
+PunctureTracker::initial_z[0] = +1
 
 CarpetX::interpolation_order = 4
 
