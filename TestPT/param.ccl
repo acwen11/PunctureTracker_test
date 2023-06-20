@@ -5,6 +5,7 @@ SHARES: ADMBase
 EXTENDS KEYWORD initial_shift 
 {
   "shift_circle" :: "circular shift field for testing puncture tracker"
+  "shift_circle_3D" :: "circular shift field with beta_z = -z"
 } 
 
 SHARES: IO
