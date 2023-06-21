@@ -1,0 +1,7 @@
+# Interface definition for thorn TestBetaZ
+
+IMPLEMENTS: TestBetaZ
+
+INHERITS: ADMBase Coordinates
+
+USES INCLUDE HEADER: loop_device.hxx

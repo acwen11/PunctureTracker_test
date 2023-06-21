@@ -240,6 +240,11 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
           }
         }
       }
+			
+			// CCTK_VINFO("I am cheating: setting beta_z = 0.");
+			// for (int n = 0; n < max_num_tracked; ++n) {
+			// 	pt_betaz[n] = 0;
+			// }
 
       // Check for NaNs and large shift components
       if (CCTK_MyProc(cctkGH) == 0) {
