@@ -28,7 +28,7 @@ extern "C" void TestPT_init_shift_circle(CCTK_ARGUMENTS) {
                                     CCTK_ATTRIBUTE_ALWAYS_INLINE {
                                       betax_(p.I) = p.y;
                                       betay_(p.I) = -p.x;
-                                      betaz_(p.I) = 0;
+                                      betaz_(p.I) = -p.z;
                                     });
 }
 
