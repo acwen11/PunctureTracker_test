@@ -265,20 +265,21 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
 
       // Time evolution
 
-      for (int n = 0; n < max_num_tracked; ++n) {
-        if (track[n]) {
-          const CCTK_REAL dt = pt_loc_t[n] - pt_t_prev[n];
-          // First order time integrator
-          // Michael Koppitz says this works...
-          // if it doesn't, we can make it second order accurate
-          pt_loc_x[n] += dt * (-pt_betax[n]);
-          pt_loc_y[n] += dt * (-pt_betay[n]);
-          pt_loc_z[n] += dt * (-pt_betaz[n]);
-          pt_vel_x[n] = -pt_betax[n];
-          pt_vel_y[n] = -pt_betay[n];
-          pt_vel_z[n] = -pt_betaz[n];
-        }
-      }
+			CCTK_VINFO("Not updating puncture locations!");
+      // for (int n = 0; n < max_num_tracked; ++n) {
+      //   if (track[n]) {
+      //     const CCTK_REAL dt = pt_loc_t[n] - pt_t_prev[n];
+      //     // First order time integrator
+      //     // Michael Koppitz says this works...
+      //     // if it doesn't, we can make it second order accurate
+      //     pt_loc_x[n] += dt * (-pt_betax[n]);
+      //     pt_loc_y[n] += dt * (-pt_betay[n]);
+      //     pt_loc_z[n] += dt * (-pt_betaz[n]);
+      //     pt_vel_x[n] = -pt_betax[n];
+      //     pt_vel_y[n] = -pt_betay[n];
+      //     pt_vel_z[n] = -pt_betaz[n];
+      //   }
+      // }
     }
 
     // Broadcast result
@@ -326,7 +327,6 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
 	if (track_boxes) {
 		const int max_num_regions = 2;
 		for (int i = 0; i < max_num_regions; i++) {
-			CCTK_VINFO("Writing punc coords to box %d.", i);
 			position_x[i] = pt_loc_x[i];
 			position_y[i] = pt_loc_y[i];
 			position_z[i] = pt_loc_z[i];

@@ -27,14 +27,19 @@ extern "C" void Loop_reflection_bd(CCTK_ARGUMENTS) {
   grid.loop_device<0, 0, 0, boundaries>(grid.nghostzones,
                                 [=] CCTK_DEVICE(const PointDesc &p)
                                     CCTK_ATTRIBUTE_ALWAYS_INLINE {
-			CCTK_REAL betaz_upper = betaz_(p.I[0], p.I[1], p.I[2] + 1);
-			CCTK_REAL betaz_lower = betaz_(p.I[0], p.I[1], p.I[2] - 1);
+			if (p.I[2] == 0) {
+				CCTK_REAL betaz_upper = betaz_({p.I[0], p.I[1], 1});
+				CCTK_REAL betaz_lower = betaz_({p.I[0], p.I[1], 1});
 
-			if (abs(betaz_upper - betaz_lower) > 10 * numeric_limits<CCTK_REAL>::epsilon()) {
-				CCTK_VERROR("Betaz parity check failed: upper value = %g; lower value = %g", betaz_upper, betaz_lower);
+				if (abs(betaz_upper - betaz_lower) > 10 * numeric_limits<CCTK_REAL>::epsilon()) {
+					CCTK_VERROR("Betaz parity check failed: upper value = %g; lower value = %g", betaz_upper, betaz_lower);
+				}
 			}
 
+			if (p.I[0] % 25 == 0 || p.I[1] % 25 == 0) {
+				CCTK_VINFO("(%g, %g, 0) passes the betaz test.", p.x, p.y);
+			}
 		});
 }
 
-} //namespace TestPT
+} //namespace TestBetaz

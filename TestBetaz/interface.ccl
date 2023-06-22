@@ -1,6 +1,6 @@
-# Interface definition for thorn TestBetaZ
+# Interface definition for thorn TestBetaz
 
-IMPLEMENTS: TestBetaZ
+IMPLEMENTS: TestBetaz
 
 INHERITS: ADMBase Coordinates
 
