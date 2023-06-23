@@ -234,6 +234,21 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
       if (verbose && CCTK_MyProc(cctkGH) == 0) {
         for (int n = 0; n < max_num_tracked; ++n) {
           if (track[n]) {
+						// const array<int, dim> indextype = {0, 0, 0};
+						// const GF3D2layout layout(cctkGH, indextype);
+
+						// const GF3D2<CCTK_REAL> betax_(layout, betax);
+						// const GF3D2<CCTK_REAL> betay_(layout, betay);
+						// const GF3D2<CCTK_REAL> betaz_(layout, betaz);
+
+						// const GridDescBaseDevice grid(cctkGH);
+						// grid.loop_all_device<0, 0, 0>(grid.nghostzones,
+						// 											[=] CCTK_DEVICE(const PointDesc &p)
+						// 													CCTK_ATTRIBUTE_ALWAYS_INLINE {
+						// 														betax_(p.I) = p.x * p.x + p.y * p.y + p.x * p.y;
+						// 														betay_(p.I) = -p.x * p.x - p.y * p.y - p.x * p.y;
+						// 														betaz_(p.I) = p.z * p.x * p.y;
+						// 													});
             CCTK_VINFO("Shift at puncture #%d is at (%g,%g,%g)", n,
                        double(pt_betax[n]), double(pt_betay[n]),
                        double(pt_betaz[n]));
@@ -265,21 +280,21 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
 
       // Time evolution
 
-			CCTK_VINFO("Not updating puncture locations!");
-      // for (int n = 0; n < max_num_tracked; ++n) {
-      //   if (track[n]) {
-      //     const CCTK_REAL dt = pt_loc_t[n] - pt_t_prev[n];
-      //     // First order time integrator
-      //     // Michael Koppitz says this works...
-      //     // if it doesn't, we can make it second order accurate
-      //     pt_loc_x[n] += dt * (-pt_betax[n]);
-      //     pt_loc_y[n] += dt * (-pt_betay[n]);
-      //     pt_loc_z[n] += dt * (-pt_betaz[n]);
-      //     pt_vel_x[n] = -pt_betax[n];
-      //     pt_vel_y[n] = -pt_betay[n];
-      //     pt_vel_z[n] = -pt_betaz[n];
-      //   }
-      // }
+			// CCTK_VINFO("Not updating puncture locations!");
+      for (int n = 0; n < max_num_tracked; ++n) {
+        if (track[n]) {
+          const CCTK_REAL dt = pt_loc_t[n] - pt_t_prev[n];
+          // First order time integrator
+          // Michael Koppitz says this works...
+          // if it doesn't, we can make it second order accurate
+          pt_loc_x[n] += dt * (-pt_betax[n]);
+          pt_loc_y[n] += dt * (-pt_betay[n]);
+          pt_loc_z[n] += dt * (-pt_betaz[n]);
+          pt_vel_x[n] = -pt_betax[n];
+          pt_vel_y[n] = -pt_betay[n];
+          pt_vel_z[n] = -pt_betaz[n];
+        }
+      }
     }
 
     // Broadcast result
