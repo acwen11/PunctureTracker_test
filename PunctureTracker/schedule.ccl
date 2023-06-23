@@ -19,8 +19,14 @@ SCHEDULE PunctureTracker_Track AT evol AFTER ODESolvers_Solve
   OPTIONS: GLOBAL
 } "Calculate new location of punctures"
 
-# SCHEDULE PunctureTracker_SetPositions AT POSTSTEP
-# {
-#   LANG: C
-#   OPTIONS: global
-# } "Copy puncture positions to spherical surfaces"
+if (read_shifts)
+{
+	SCHEDULE PunctureTracker_CheckShift AT evol AFTER PunctureTracker_Track
+	{
+		LANG: C
+		READS: ADMBase::shift(interior)
+		READS: pt_loc
+		READS: Coordinates::vertex_coords(everywhere)
+		OPTIONS: LOCAL
+	} "Outputs nearby shift quantities to stdout"
+}
