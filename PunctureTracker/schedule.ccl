@@ -25,8 +25,9 @@ if (read_shifts)
 	{
 		LANG: C
 		READS: ADMBase::shift(interior)
+		READS: BoxInBox::num_levels
 		READS: pt_loc
-		READS: Coordinates::vertex_coords(everywhere)
+		READS: Coordinates::vertex_coords(interior)
 		OPTIONS: LOCAL
 	} "Outputs nearby shift quantities to stdout"
 }

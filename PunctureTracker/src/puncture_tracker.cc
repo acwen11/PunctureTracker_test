@@ -305,18 +305,21 @@ extern "C" void PunctureTracker_CheckShift(CCTK_ARGUMENTS) {
 
   const GridDescBaseDevice grid(cctkGH);
 
-  if (CCTK_MyProc(cctkGH) == 0) {
+	const int level = ilogb(CCTK_REAL(cctk_levfac[0]));
+	const int finest_lvl = num_levels[0] - 1;	
+
+	if (level == finest_lvl || level == 4) {
 		for (int n = 0; n < max_num_tracked; ++n) {
 			if (track[n]) {
+
 				const vect<CCTK_REAL, dim> loc_vec = {pt_loc_x[n], pt_loc_y[n], pt_loc_z[n]};
-				CCTK_VINFO("Checking near {%g, %g, %g}...", loc_vec[0], loc_vec[1], loc_vec[2]);
 
 				grid.loop_all_device<0, 0, 0>(grid.nghostzones,
 																			[=] CCTK_DEVICE(const PointDesc &p)
 																					CCTK_ATTRIBUTE_ALWAYS_INLINE {
-						if (maximum(abs(p.X - loc_vec)) <= 0.03) {
-							CCTK_VINFO("Shift near puncture #%d is {%g, %g, %g}.", n,
-								betax_(p.I), betay_(p.I), betaz_(p.I)); 
+						if (maximum(abs(p.X - loc_vec)) <= (1 / pow(2, level))) {
+							CCTK_VINFO("Shift at level %d near puncture #%d is {%g, %g, %g} at coords {%g, %g, %g}.", level, n,
+								betax_(p.I), betay_(p.I), betaz_(p.I), p.x, p.y, p.z); 
 						}
 					});
 			}
