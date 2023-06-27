@@ -28,7 +28,7 @@ extern "C" void TestPT_init_shift_circle(CCTK_ARGUMENTS) {
                                     CCTK_ATTRIBUTE_ALWAYS_INLINE {
                                       betax_(p.I) = p.y;
                                       betay_(p.I) = -p.x;
-                                      betaz_(p.I) = -1000 * p.z;
+                                      betaz_(p.I) = 1000 * p.z;
                                     });
 }
 
@@ -68,9 +68,9 @@ extern "C" void TestPT_init_shift_3D(CCTK_ARGUMENTS) {
   grid.loop_all_device<0, 0, 0>(grid.nghostzones,
                                 [=] CCTK_DEVICE(const PointDesc &p)
                                     CCTK_ATTRIBUTE_ALWAYS_INLINE {
-                                      betax_(p.I) = p.x * p.x + p.y * p.y * p.y;
-                                      betay_(p.I) = -p.x * p.x * p.x + p.y * p.y;
-                                      betaz_(p.I) = p.z * p.x * p.y;
+                                      betax_(p.I) = (1.0 / 50.0) * p.x * p.x + p.y * p.y * p.y;
+                                      betay_(p.I) = -(1.0 / 50.0) * p.x * p.x * p.x + p.y * p.y;
+                                      betaz_(p.I) = p.z * (p.x * p.x + p.y * p.y);
                                     });
 }
 } //namespace TestPT
