@@ -156,7 +156,6 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
 		// const CCTK_REAL interp_coords[dim][num_points] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
 		// const void* interp_coords[dim] = {*pt_loc_x_p, *pt_loc_y_p, *pt_loc_z_p};
 
-
     // Interpolated variables
     assert(num_vars == 3);
     int input_array_indices[3];
@@ -317,7 +316,7 @@ extern "C" void PunctureTracker_CheckShift(CCTK_ARGUMENTS) {
 				grid.loop_all_device<0, 0, 0>(grid.nghostzones,
 																			[=] CCTK_DEVICE(const PointDesc &p)
 																					CCTK_ATTRIBUTE_ALWAYS_INLINE {
-						if (maximum(abs(p.X - loc_vec)) <= (0.06 / pow(2, level))) {
+						if (maximum(abs(p.X - loc_vec)) <= (1 / pow(2, level))) {
 							CCTK_VINFO("Shift at level %d near puncture #%d is {%g, %g, %g} at coords {%g, %g, %g}.", level, n,
 								betax_(p.I), betay_(p.I), betaz_(p.I), p.x, p.y, p.z); 
 						}

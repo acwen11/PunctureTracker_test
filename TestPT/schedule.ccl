@@ -50,3 +50,13 @@ if (CCTK_Equals(initial_shift, "shift_ycircle"))
 		WRITES: ADMBase::shift(everywhere)
 	} "Create shift field"
 }
+
+if (test_z_parity)
+{
+	SCHEDULE TestPT_interp_test AT evol AFTER ODESolvers_Solve
+	{
+		LANG:C
+		READS: ADMBase::shift(everywhere)
+		OPTIONS: GLOBAL
+	} "Interpolates at z = +/- 1"
+}
