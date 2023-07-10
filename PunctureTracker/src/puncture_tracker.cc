@@ -361,7 +361,7 @@ extern "C" void CheckInterpolate(CCTK_ARGUMENTS) {
   int param_table_handle = Util_TableCreate(UTIL_TABLE_FLAGS_DEFAULT);
   if (param_table_handle < 0)
     CCTK_VERROR("Can't create parameter table: %d", param_table_handle);
-  if ((ierr = Util_TableSetInt(param_table_handle, 1, "order")) < 0)
+  if ((ierr = Util_TableSetInt(param_table_handle, interp_order, "order")) < 0)
     CCTK_VERROR("Can't set order in parameter table: %d", ierr);
   if ((ierr = Util_TableSetIntArray(param_table_handle, num_vars, (int const*const)operands,
                             "operand_indices")) < 0)

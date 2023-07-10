@@ -50,6 +50,10 @@ INT new_reflevel_number[2] "The new number of refinement levels"
   -1:* :: "Negative for no change"
 } -1
 
+INT interp_order "Shift interpolation order"
+{
+  0:* :: ""
+} 1
 
 INT which_surface_to_store_info[10] "A spherical surface index where we can store the puncture location"
 {
