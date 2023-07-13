@@ -159,9 +159,9 @@ extern "C" void PunctureTracker_Track(CCTK_ARGUMENTS) {
     // Interpolated variables
     assert(num_vars == 3);
     int input_array_indices[3];
-    input_array_indices[0] = CCTK_VarIndex("ADMBase::betax");
-    input_array_indices[1] = CCTK_VarIndex("ADMBase::betay");
-    input_array_indices[2] = CCTK_VarIndex("ADMBase::betaz");
+    input_array_indices[0] = CCTK_VarIndex("ADMBaseX::betax");
+    input_array_indices[1] = CCTK_VarIndex("ADMBaseX::betay");
+    input_array_indices[2] = CCTK_VarIndex("ADMBaseX::betaz");
 
     // Interpolation result types: Not used by CarpetX DriverInterp
 		CCTK_INT const output_array_type_codes[1] = {0};
@@ -392,9 +392,9 @@ extern "C" void CheckInterpolate(CCTK_ARGUMENTS) {
     // Interpolated variables
     assert(num_vars == 3);
     int input_array_indices[3];
-    input_array_indices[0] = CCTK_VarIndex("ADMBase::betax");
-    input_array_indices[1] = CCTK_VarIndex("ADMBase::betay");
-    input_array_indices[2] = CCTK_VarIndex("ADMBase::betaz");
+    input_array_indices[0] = CCTK_VarIndex("ADMBaseX::betax");
+    input_array_indices[1] = CCTK_VarIndex("ADMBaseX::betay");
+    input_array_indices[2] = CCTK_VarIndex("ADMBaseX::betaz");
 
     // Interpolation result types: Not used by CarpetX DriverInterp
 		CCTK_INT const output_array_type_codes[1] = {0};

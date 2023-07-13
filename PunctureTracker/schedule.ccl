@@ -12,7 +12,7 @@ SCHEDULE PunctureTracker_Init AT initial
 SCHEDULE PunctureTracker_Track AT evol AFTER ODESolvers_Solve
 {
   LANG: C
-  READS: ADMBase::shift(everywhere)
+  READS: ADMBaseX::shift(everywhere)
 	WRITES: pt_loc
 	WRITES: pt_vel
 	WRITES: BoxInBox::positions
@@ -24,7 +24,7 @@ if (read_shifts)
 	SCHEDULE PunctureTracker_CheckShift AT evol BEFORE PunctureTracker_Track
 	{
 		LANG: C
-		READS: ADMBase::shift(interior)
+		READS: ADMBaseX::shift(interior)
 		READS: BoxInBox::num_levels
 		READS: pt_loc
 		READS: Coordinates::vertex_coords(interior)
@@ -37,7 +37,7 @@ if (check_interpolate)
 	SCHEDULE CheckInterpolate AT evol AFTER ODESolvers_Solve
 	{
 		LANG: C
-		READS: ADMBase::shift(everywhere)
+		READS: ADMBaseX::shift(everywhere)
 		READS: BoxInBox::num_levels
 		READS: pt_loc
 		READS: Coordinates::vertex_coords(everywhere)

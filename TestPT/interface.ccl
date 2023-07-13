@@ -2,7 +2,7 @@
 
 IMPLEMENTS: TestPT
 
-INHERITS: ADMBase Coordinates
+INHERITS: ADMBaseX Coordinates
 
 USES INCLUDE HEADER: loop_device.hxx
 

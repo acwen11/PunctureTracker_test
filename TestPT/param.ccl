@@ -4,7 +4,7 @@ BOOLEAN test_z_parity "interpolate two test points reflected across the x-y plan
 {
 } "no"
 
-SHARES: ADMBase
+SHARES: ADMBaseX
 
 EXTENDS KEYWORD initial_shift 
 {
